@@ -8,8 +8,8 @@ terraform {
 }
 
 provider "aws" {
-  region     = context.env.AWS_DEFAULT_REGION
-  access_key = context.env.AWS_ACCESS_KEY_ID
+  region     = AWS_DEFAULT_REGION
+  access_key = AWS_ACCESS_KEY_ID
   secret_key = context.env.AWS_SECRET_ACCESS_KEY
 }
 
