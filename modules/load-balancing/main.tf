@@ -1,4 +1,4 @@
-
+# create bucket to use here or via tutorial on aws console
 # resource "aws_s3_bucket" "lb_logs_bucket" {
 #   bucket = "lb-logs-terraform"
 #   tags = {
@@ -8,7 +8,7 @@
 
 # resource "aws_s3_bucket_acl" "lb_bucket_acl" {
 #   bucket = aws_s3_bucket.lb_logs_bucket.id
-#   acl    = "private"
+#   acl    = "log-delivery-write"
 # }
 
 resource "aws_lb" "load_balancer" {
@@ -18,15 +18,13 @@ resource "aws_lb" "load_balancer" {
   security_groups    = [var.lb_sg_id]
   subnets            = var.public_sub_ids
 
-  idle_timeout = 200
-
-  #   access_logs {
-  #     bucket  = aws_s3_bucket.lb_logs_bucket.bucket
-  #     prefix  = "loadbalancer-logs"
-  #     enabled = true
-  #   }
+  access_logs {
+    bucket  = "lb-logs-tf"
+    prefix  = "lb-logs"
+    enabled = true
+  }
   depends_on = [
-    var.vpc_id
+    var.vpc_id, var.ig_id
   ]
 }
 

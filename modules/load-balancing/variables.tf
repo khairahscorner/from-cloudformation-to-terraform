@@ -11,3 +11,6 @@ variable "public_sub_ids" {
 variable "vpc_id" {
   type = string
 }
+variable "ig_id" {
+  type = string
+}

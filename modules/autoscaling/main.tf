@@ -6,9 +6,8 @@ resource "aws_launch_template" "servers_launch_template" {
   key_name      = var.key_name
   instance_type = var.instance_type
 
-  vpc_security_group_ids               = [var.ec2_sg_id]
-  instance_initiated_shutdown_behavior = "terminate"
-  user_data                            = filebase64("${path.module}/ec2.sh")
+  vpc_security_group_ids = [var.ec2_sg_id]
+  user_data              = filebase64("${path.module}/ec2.sh")
 
   block_device_mappings {
     device_name = "/dev/sda1"
@@ -51,7 +50,5 @@ resource "aws_autoscaling_group" "servers_auto_scaling_group" {
   target_group_arns = [aws_lb_target_group.servers_target_group.arn]
   health_check_type = "EC2"
 
-  depends_on = [
-    var.vpc_id
-  ]
+  depends_on = [var.vpc_id, var.ig_id]
 }

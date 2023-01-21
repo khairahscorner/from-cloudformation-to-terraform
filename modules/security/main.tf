@@ -106,3 +106,65 @@ resource "aws_iam_instance_profile" "ec2_role_profile" {
   name = "UdacityReadOnlyProfile"
   role = aws_iam_role.ec2_s3_read_only.name
 }
+
+
+#Bastion host configs.
+resource "aws_security_group" "bastion_security_group" {
+  name        = "BastionSecurityGroup"
+  description = "security group for bastion"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    description = "allow access incoming http traffic"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    description = "permit outgoing http traffic"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  vpc_id = var.vpc_id
+  tags = {
+    Name = "bastion_sg"
+  }
+  lifecycle {
+    # Necessary if changing 'name' or 'name_prefix' properties.
+    create_before_destroy = true
+  }
+}
+
+resource "aws_launch_template" "host_launch_template" {
+  name                   = "HostLaunchTemplate"
+  image_id               = var.launch_ami
+  key_name               = var.key_name
+  instance_type          = var.instance_type
+  vpc_security_group_ids = [aws_security_group.bastion_security_group.id]
+
+  block_device_mappings {
+    device_name = "/dev/sdk"
+    ebs {
+      volume_size = 10
+    }
+  }
+
+  # user_data = filebase64("${path.module}/ec2.sh") #will need to readd to folder
+}
+
+resource "aws_autoscaling_group" "host_auto_scaling_group" {
+  name                = "BastionAutoScalingGroup"
+  max_size            = 3
+  min_size            = 2
+  vpc_zone_identifier = var.zone_identifiers
+
+  launch_template {
+    id      = aws_launch_template.host_launch_template.id
+    version = "$Latest"
+  }
+
+  depends_on = [var.vpc_id, var.ig_id]
+}

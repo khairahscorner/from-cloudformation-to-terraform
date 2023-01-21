@@ -35,7 +35,13 @@ module "routes" {
 module "security" {
   source = "./modules/security"
 
-  vpc_id = module.setup.vpc_id
+  vpc_id           = module.setup.vpc_id
+  ig_id            = module.setup.ig_id
+  zone_identifiers = module.setup.public_subnet_ids
+
+  launch_ami    = var.ami
+  instance_type = var.instance_type
+  key_name      = var.key_name
 }
 
 module "autoscaling" {
@@ -46,6 +52,7 @@ module "autoscaling" {
   key_name      = var.key_name
 
   vpc_id = module.setup.vpc_id
+  ig_id  = module.setup.ig_id
 
   iam_profile      = module.security.profile
   ec2_sg_id        = module.security.app_sg
@@ -60,4 +67,5 @@ module "load-balancing" {
   lb_sg_id       = module.security.lb_sg
   public_sub_ids = module.setup.public_subnet_ids
   vpc_id         = module.setup.vpc_id
+  ig_id          = module.setup.ig_id
 }
