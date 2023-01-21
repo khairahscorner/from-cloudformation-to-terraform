@@ -1,0 +1,49 @@
+version: 2.1
+
+orbs:
+  terraform: circleci/terraform@3.2.0
+  aws-cli: circleci/aws-cli@3.1
+
+jobs:
+  terraform_setup:
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: "initialise"
+          command: |
+            terraform init
+            terraform plan -out=tfplan -target=module.setup
+            terraform apply -target=module.setup
+      - persist_to_workspace:
+          root:  ~/project
+          paths:
+            - tfplan
+
+
+workflows:
+  deploy_infrastructure:
+    jobs:
+      - terraform_setup:
+          checkout: true
+          context: terraform
+      # - terraform/validate:
+      #     checkout: true
+      #     context: terraform
+      #     requires:
+      #       - terraform/fmt
+      # - terraform/plan:
+      #     checkout: true
+      #     context: terraform
+      #     persist-workspace: true
+      #     requires:
+      #       - terraform/validate
+      # - terraform/apply:
+      #     attach-workspace: true
+      #     context: terraform
+      #     filters:
+      #       branches:
+      #         only: main
+      #     requires:
+      #       - terraform/plan
