@@ -9,18 +9,15 @@ jobs:
     executor: terraform/default
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/project
       - run:
           name: "initialise"
           command: |
             terraform init
+      - run:
+          name: "plan"
+          command: |
             terraform plan -out=tfplan -target=module.setup
             terraform apply -target=module.setup
-      - persist_to_workspace:
-          root:  ~/project
-          paths:
-            - tfplan
 
 
 workflows:
