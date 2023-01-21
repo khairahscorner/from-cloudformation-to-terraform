@@ -14,19 +14,8 @@ variable "eip_id" {
 }
 
 variable "public_sub_ids" {
-  type    = list(string)
-  default = ["a", "b"]
+  type = list(string)
 }
 variable "private_sub_ids" {
-  type    = list(string)
-  default = ["a", "b"]
+  type = list(string)
 }
-
-# variable "launch_config_ami" {
-#   description = "Image id for launch config"
-#   type = string
-# }
-# variable "instance_type" {
-#   description = "Instance type in launch config"
-#   type = string
-# }

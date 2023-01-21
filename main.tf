@@ -31,3 +31,33 @@ module "routes" {
   public_sub_ids  = module.setup.public_subnet_ids
   private_sub_ids = module.setup.private_subnet_ids
 }
+
+module "security" {
+  source = "./modules/security"
+
+  vpc_id = module.setup.vpc_id
+}
+
+module "autoscaling" {
+  source = "./modules/autoscaling"
+
+  launch_ami    = var.ami
+  instance_type = var.instance_type
+  key_name      = var.key_name
+
+  vpc_id = module.setup.vpc_id
+
+  iam_profile      = module.security.profile
+  ec2_sg_id        = module.security.app_sg
+  lb_sg_id         = module.security.lb_sg
+  zone_identifiers = module.setup.private_subnet_ids
+}
+
+module "load-balancing" {
+  source = "./modules/load-balancing"
+
+  tg_arn         = module.autoscaling.target_gp_arn
+  lb_sg_id       = module.security.lb_sg
+  public_sub_ids = module.setup.public_subnet_ids
+  vpc_id         = module.setup.vpc_id
+}
