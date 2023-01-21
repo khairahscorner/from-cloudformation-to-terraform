@@ -26,9 +26,7 @@ jobs:
 workflows:
   deploy_infrastructure:
     jobs:
-      - terraform_setup:
-          checkout: true
-          context: terraform
+      - terraform_setup
       # - terraform/validate:
       #     checkout: true
       #     context: terraform
