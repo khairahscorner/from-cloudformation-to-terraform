@@ -6,6 +6,7 @@ orbs:
 
 jobs:
   terraform_setup:
+    executor: terraform/default
     steps:
       - checkout
       - attach_workspace:
