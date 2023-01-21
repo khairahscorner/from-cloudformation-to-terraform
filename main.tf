@@ -7,11 +7,9 @@ terraform {
   }
 }
 
-provider "aws" {
-  region     = AWS_DEFAULT_REGION
-  access_key = AWS_ACCESS_KEY_ID
-  secret_key = context.env.AWS_SECRET_ACCESS_KEY
-}
+# provider "aws" {
+#   region = "us-east-1"
+# }
 
 module "setup" {
   source = "./modules/setup"
