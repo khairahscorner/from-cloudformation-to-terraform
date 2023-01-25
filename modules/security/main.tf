@@ -5,28 +5,6 @@ resource "aws_security_group" "app_servers_security_group" {
   description = "security group for the servers"
   vpc_id      = var.vpc_id
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    description = "allow access incoming http traffic"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    description = "allow access incoming http ssh traffic"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  egress {
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
-    description = "permit all outgoing traffic from all ports"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Name = "app_sg"
   }
@@ -36,33 +14,33 @@ resource "aws_security_group" "app_servers_security_group" {
   }
 }
 
-# resource "aws_security_group_rule" "allow_http" {
-#   type              = "ingress"
-#   from_port         = 80
-#   to_port           = 80
-#   protocol          = "tcp"
-#   description       = "allow access incoming http traffic"
-#   cidr_blocks       = ["0.0.0.0/0"]
-#   security_group_id = aws_security_group.app_servers_security_group.id
-# }
-# resource "aws_security_group_rule" "allow_ssh" {
-#   type              = "ingress"
-#   from_port         = 22
-#   to_port           = 22
-#   protocol          = "tcp"
-#   description       = "allow access incoming http ssh traffic"
-#   cidr_blocks       = ["0.0.0.0/0"]
-#   security_group_id = aws_security_group.app_servers_security_group.id
-# }
-# resource "aws_security_group_rule" "allow_all_out" {
-#   type              = "egress"
-#   from_port         = 0
-#   to_port           = 65535
-#   protocol          = "tcp"
-#   description       = "permit all outgoing traffic from all ports"
-#   cidr_blocks       = ["0.0.0.0/0"]
-#   security_group_id = aws_security_group.app_servers_security_group.id
-# }
+resource "aws_security_group_rule" "allow_http" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  description       = "allow access incoming http traffic"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.app_servers_security_group.id
+}
+resource "aws_security_group_rule" "allow_ssh" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  description       = "allow access incoming http ssh traffic"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.app_servers_security_group.id
+}
+resource "aws_security_group_rule" "allow_all_out" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 65535
+  protocol          = "tcp"
+  description       = "permit all outgoing traffic from all ports"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.app_servers_security_group.id
+}
 
 
 resource "aws_security_group" "load_balancer_security_group" {
