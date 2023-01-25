@@ -1,7 +1,7 @@
 
 resource "aws_nat_gateway" "nat_gateway" {
   allocation_id = var.eip_id
-  subnet_id     = var.private_sub_ids[0]
+  subnet_id     = var.public_sub_ids[0]
 
   tags = {
     Name = "NAT Gateway"
@@ -40,16 +40,20 @@ resource "aws_route" "private_route" {
   depends_on             = [aws_route_table.private_route_table]
 }
 
-resource "aws_route_table_association" "public" {
+resource "aws_route_table_association" "public1" {
   route_table_id = aws_route_table.public_route_table.id
-
-  for_each  = toset(var.public_sub_ids)
-  subnet_id = each.key
+  subnet_id      = var.public_sub_ids[0]
+}
+resource "aws_route_table_association" "public2" {
+  route_table_id = aws_route_table.public_route_table.id
+  subnet_id      = var.public_sub_ids[1]
 }
 
-resource "aws_route_table_association" "private" {
+resource "aws_route_table_association" "private1" {
   route_table_id = aws_route_table.private_route_table.id
-
-  for_each  = toset(var.private_sub_ids)
-  subnet_id = each.key
+  subnet_id      = var.private_sub_ids[0]
+}
+resource "aws_route_table_association" "private2" {
+  route_table_id = aws_route_table.private_route_table.id
+  subnet_id      = var.private_sub_ids[1]
 }
