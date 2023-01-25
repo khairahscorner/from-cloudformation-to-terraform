@@ -16,8 +16,6 @@ jobs:
           path: .
       - terraform/apply:
           path: .
-      - terraform/destroy:
-          path: .
     working_directory: ~/src
 workflows:
   single-job-lifecycle:
